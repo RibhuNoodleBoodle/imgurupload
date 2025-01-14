@@ -1,19 +1,18 @@
 package com.synch.imgur.upload.security;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtRequestFilter implements Filter {
 
     private final JwtUtil jwtUtil;
 
@@ -22,23 +21,37 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader("Authorization");
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            try {
-                String phoneNumber = jwtUtil.extractPhoneNumber(token);
-                if (jwtUtil.validateToken(token, phoneNumber)) {
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phoneNumber, null, null);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        // Extract JWT token from cookies
+        String token = null;
+        if (httpRequest.getCookies() != null) {
+            for (Cookie cookie : httpRequest.getCookies()) {
+                if ("JWT".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
                 }
-            } catch (JWTVerificationException e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid JWT token");
-                return;
             }
         }
-        filterChain.doFilter(request, response);
+
+        if (token != null) {
+            String username = jwtUtil.extractUsername(token);
+            // Perform authentication (load user details)
+            // ...
+            // If valid, set authentication context
+        }
+
+        chain.doFilter(request, response);
     }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {}
+
+    @Override
+    public void destroy() {}
 }
+

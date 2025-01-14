@@ -25,7 +25,7 @@ public class ImageService {
         String url = "https://api.imgur.com/3/image";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.set("Authorization", "Client-ID " + clientId);
+        headers.set("Client-ID", clientId);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         try {
@@ -42,7 +42,7 @@ public class ImageService {
     public ResponseEntity<String> viewImage(String imageId) {
         String url = "https://api.imgur.com/3/image/" + imageId;
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Client-ID " + clientId);
+        headers.set("Client-ID", clientId);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -51,7 +51,7 @@ public class ImageService {
     public ResponseEntity<String> deleteImage(String imageId) {
         String url = "https://api.imgur.com/3/image/" + imageId;
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Client-ID " + clientId);
+        headers.set("Client-ID", clientId);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);

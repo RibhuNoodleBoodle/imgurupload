@@ -21,13 +21,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf().disable()  // Disable CSRF for simplicity (if you need it, you can configure it properly)
                 .authorizeHttpRequests()
-                .requestMatchers("/users/login", "/users/register").permitAll()  // Allow login without authentication
-                .anyRequest().authenticated()  // All other requests require authentication
+                .anyRequest().permitAll()  // Allow all requests without authentication
                 .and()
-                .addFilterBefore(new JwtRequestFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(new JwtRequestFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);  // Add JWT filter
         return http.build();
     }
 

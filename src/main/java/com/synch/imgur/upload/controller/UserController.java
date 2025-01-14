@@ -1,9 +1,13 @@
 package com.synch.imgur.upload.controller;
 
+import com.synch.imgur.upload.models.LoginRequest;
 import com.synch.imgur.upload.models.User;
 import com.synch.imgur.upload.security.JwtUtil;
 import com.synch.imgur.upload.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,15 +36,23 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginRequest) {
-        User user = userService.findUserByUsername(loginRequest.getUsername());
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        // Authenticate the user (simplified for demonstration)
+        // You can perform authentication using UsernamePasswordAuthenticationToken here
 
-        if (user == null || !loginRequest.getPassword().equals(user.getPassword())) {
-            return ResponseEntity.status(401).body("Invalid credentials");
-        }
+        String username = loginRequest.getUsername();
+        String token = jwtUtil.generateToken(username);
 
-        String token = jwtUtil.generateToken(user.getUsername());
-        return ResponseEntity.ok(token);
+        // Create a cookie to store the JWT token
+        Cookie cookie = new Cookie("JWT", token);
+        cookie.setHttpOnly(true); // Secure flag (set to true in production)
+        cookie.setMaxAge(86400); // Token expiration (1 day)
+        cookie.setPath("/"); // Make it available for all endpoints
+
+        // Add cookie to the response
+        response.addCookie(cookie);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Login successful");
     }
 
 

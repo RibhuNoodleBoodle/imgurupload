@@ -1,6 +1,7 @@
 /home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/UploadApplication.java
 /home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/controller/ImageController.java
 /home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/controller/UserController.java
+/home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/models/LoginRequest.java
 /home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/models/User.java
 /home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/repository/UserRepository.java
 /home/ribhu/Documents/imgurupload/src/main/java/com/synch/imgur/upload/security/JwtRequestFilter.java
