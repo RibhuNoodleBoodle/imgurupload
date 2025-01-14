@@ -20,8 +20,8 @@ This is a Spring Boot-based REST application that provides endpoints to manage u
 - Spring Boot 3.x.x
 - H2 Database (in-memory)
 - Imgur API Account (Sign in via Twitter/Facebook/Gmail)
-- OAuth2 and JWT libraries for securing the API
-- Kafka or another messaging platform for event handling
+- JWT libraries for securing the API
+
 
 ## Setup
 
