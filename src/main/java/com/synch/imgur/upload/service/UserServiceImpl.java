@@ -1,4 +1,6 @@
 package com.synch.imgur.upload.service;
+import com.synch.imgur.upload.exceptions.DuplicateResourceException;
+import com.synch.imgur.upload.exceptions.UserNotFoundException;
 import com.synch.imgur.upload.models.dto.ImageResponseDTO;
 import com.synch.imgur.upload.models.dto.UserDTO;
 import com.synch.imgur.upload.models.user.User;
@@ -29,10 +31,18 @@ public class UserServiceImpl implements UserService {
         log.info("Registering new user with username: {}", userDTO.getUsername());
 
         if (userRepository.existsByUsername(userDTO.getUsername())) {
-            throw new DuplicateResourceException("Username already exists");
+            try {
+                throw new DuplicateResourceException("Username already exists");
+            } catch (DuplicateResourceException e) {
+                throw new RuntimeException(e);
+            }
         }
         if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new DuplicateResourceException("Email already exists");
+            try {
+                throw new DuplicateResourceException("Email already exists");
+            } catch (DuplicateResourceException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         User user = new User();
@@ -49,9 +59,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserByUsername(String username) {
         log.info("Retrieving user details for username: {}", username);
-        return userRepository.findByUsername(username)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        try {
+            return userRepository.findByUsername(username)
+                    .map(this::convertToDTO)
+                    .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -60,8 +74,13 @@ public class UserServiceImpl implements UserService {
                                                    String deleteHash, String imageUrl) {
         log.info("Associating image {} with user {}", imageHash, username);
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        User user = null;
+        try {
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         UserImage userImage = new UserImage();
         userImage.setUser(user);

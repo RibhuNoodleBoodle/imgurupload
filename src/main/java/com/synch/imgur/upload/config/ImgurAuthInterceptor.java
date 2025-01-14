@@ -1,4 +1,4 @@
-package com.synch.imgur.upload.config.imgur;
+package com.synch.imgur.upload.config;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;

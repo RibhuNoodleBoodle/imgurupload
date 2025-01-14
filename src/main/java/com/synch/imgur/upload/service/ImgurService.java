@@ -1,6 +1,6 @@
 package com.synch.imgur.upload.service;
 
-import com.synch.imgur.upload.config.imgur.ImgurProperties;
+import com.synch.imgur.upload.config.ImgurProperties;
 import com.synch.imgur.upload.exceptions.ImageProcessingException;
 import com.synch.imgur.upload.exceptions.ImgurApiException;
 import org.springframework.beans.factory.annotation.Qualifier;

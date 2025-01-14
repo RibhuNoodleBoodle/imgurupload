@@ -1,4 +1,4 @@
-package com.synch.imgur.upload.config.imgur;
+package com.synch.imgur.upload.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
