@@ -32,8 +32,8 @@ This is a Spring Boot-based REST application that provides endpoints to manage u
    ```
 
 2. **Dependencies**: The project uses the following key dependencies:
-   - Spring Boot 3.x.x
-   - Spring Security (OAuth2, JWT)
+   - Spring Boot 3.3.7
+   - Spring Security (JWT)
    - JPA (H2 Database)
    - Imgur API Integration
    - Apache Kafka (for messaging)
