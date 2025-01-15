@@ -1,79 +1,72 @@
-package com.synch.imgur.upload.controller;
+    package com.synch.imgur.upload.controller;
 
-import com.synch.imgur.upload.service.ImageService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+    import com.synch.imgur.upload.config.TestConfig;
+    import com.synch.imgur.upload.service.ImageService;
+    import org.junit.jupiter.api.Test;
+    import org.springframework.beans.factory.annotation.Value;
+    import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+    import org.springframework.boot.test.mock.mockito.MockBean;
+    import org.springframework.http.MediaType;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.mock.web.MockMultipartFile;
+    import org.springframework.test.context.ContextConfiguration;
+    import org.springframework.test.web.servlet.MockMvc;
+    import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+    import static org.mockito.Mockito.when;
+    import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+    import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+    @ContextConfiguration(classes = TestConfig.class)
+    @WebMvcTest(ImageController.class)
+    class ImageControllerTests {
 
-@WebMvcTest
-public class ImageControllerTests {
+        @Autowired
+        private MockMvc mockMvc;
 
-    private MockMvc mockMvc;
+        @MockBean
+        private ImageService imageService;
 
-    @InjectMocks
-    private ImageController imageController;
+        @Value("${imgur.client-id}")  // Use your Imgur Client-ID
+        private String clientId;
 
-    @Mock
-    private ImageService imageService;
+        @Test
+        void testUploadImage() throws Exception {
+            MockMultipartFile testImage = new MockMultipartFile(
+                    "image",
+                    "test.jpg",
+                    MediaType.IMAGE_JPEG_VALUE,
+                    "Test Image Content".getBytes()
+            );
 
-    @Value("${imgur.client.id}")
-    private String imgurClientId;
+            when(imageService.uploadImage(testImage)).thenReturn(ResponseEntity.ok("Image uploaded successfully"));
 
-    @BeforeEach
-    public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(imageController).build();
+            mockMvc.perform(multipart("/images/upload")
+                            .file(testImage)
+                            .header("Authorization", "Client-ID " + clientId))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("Image uploaded successfully"));
+        }
+
+        @Test
+        void testViewImage() throws Exception {
+            String imageId = "testImageId";
+            when(imageService.viewImage(imageId)).thenReturn(ResponseEntity.ok("Image details"));
+
+            mockMvc.perform(get("/images/{imageId}", imageId)
+                            .header("Authorization", "Client-ID " + clientId))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("Image details"));
+        }
+
+        @Test
+        void testDeleteImage() throws Exception {
+            String imageId = "testImageId";
+            when(imageService.deleteImage(imageId)).thenReturn(ResponseEntity.ok("Image deleted successfully"));
+
+            mockMvc.perform(delete("/images/{imageId}", imageId)
+                            .header("Authorization", "Client-ID " + clientId))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("Image deleted successfully"));
+        }
     }
-
-    // Helper method to generate a black block image (640x480)
-    private byte[] generateBlackBlockImage() throws IOException {
-        BufferedImage image = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = image.createGraphics();
-        g2d.setColor(Color.BLACK);
-        g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
-        g2d.dispose();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        javax.imageio.ImageIO.write(image, "jpeg", baos);
-        return baos.toByteArray();
-    }
-
-    @Test
-    public void testUploadImage() throws Exception {
-        // Generate the black block image
-        byte[] blackBlockImage = generateBlackBlockImage();
-
-        // Mock the ImageService to simulate the upload response
-        when(imageService.uploadImage(org.mockito.ArgumentMatchers.any()))
-                .thenReturn(org.springframework.http.ResponseEntity.status(HttpStatus.OK).body("Upload successful"));
-
-        // Perform the test upload
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/images/upload")
-                        .file("file", blackBlockImage)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Upload successful"))
-                .andReturn();
-
-        // Optionally print the result for verification
-        System.out.println("Response: " + result.getResponse().getContentAsString());
-    }
-}
-

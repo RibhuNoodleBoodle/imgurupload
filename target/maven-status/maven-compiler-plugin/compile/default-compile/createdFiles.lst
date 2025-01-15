@@ -4,8 +4,8 @@ com/synch/imgur/upload/UploadApplication.class
 com/synch/imgur/upload/models/User.class
 com/synch/imgur/upload/service/UserService.class
 com/synch/imgur/upload/security/JwtRequestFilter.class
-com/synch/imgur/upload/repository/UserRepository.class
 com/synch/imgur/upload/service/ImageService.class
+com/synch/imgur/upload/repository/UserRepository.class
 com/synch/imgur/upload/service/UserServiceImpl.class
 com/synch/imgur/upload/controller/ImageController.class
 com/synch/imgur/upload/security/SecurityConfig.class
