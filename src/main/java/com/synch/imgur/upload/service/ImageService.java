@@ -25,6 +25,7 @@ public class ImageService {
         String url = "https://api.imgur.com/3/image";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.set("Authorization", "Client-ID "+clientId);
         headers.set("Client-ID", clientId);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();

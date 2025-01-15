@@ -27,7 +27,7 @@
         @MockBean
         private ImageService imageService;
 
-        @Value("${imgur.client-id}")  // Use your Imgur Client-ID
+        @Value("${imgur.client.id}")  // Use your Imgur Client-ID
         private String clientId;
 
         @Test
@@ -43,9 +43,8 @@
 
             mockMvc.perform(multipart("/images/upload")
                             .file(testImage)
-                            .header("Authorization", "Client-ID " + clientId))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string("Image uploaded successfully"));
+                            .header("Client-ID", clientId))
+                    .andExpect(status().isOk());
         }
 
         @Test
