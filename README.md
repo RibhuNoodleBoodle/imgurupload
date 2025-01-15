@@ -76,7 +76,7 @@ This is a Spring Boot-based REST application that provides endpoints to manage u
 - **POST** `/images/upload`
 - **Request Body**: 
   - Requires the image file to be uploaded along with user authentication.
-  - Make sure you're passing the Client-ID on Postman
+  - Make sure you're passing the Client-ID on Postman Header ([{"key":"Client-ID","value":"<client-id-value>","description":"","type":"default","enabled":true}])
   
 ### 3. Delete Image
 
