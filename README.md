@@ -1,4 +1,4 @@
-# Synchrony Project
+# Imgur Upload Project
 
 ## Overview
 
@@ -61,35 +61,28 @@ This is a Spring Boot-based REST application that provides endpoints to manage u
 
 ### 1. Register User
 
-- **POST** `/api/users/register`
+- **POST** `/users/register`
 - **Request Body**:
   ```json
   {
     "username": "user1",
-    "password": "password123"
+    "password": "password123",
+     "email": "exampleemail@email.com"
   }
   ```
 
 ### 2. Upload Image
 
-- **POST** `/api/images/upload`
+- **POST** `/images/upload`
 - **Request Body**: 
   - Requires the image file to be uploaded along with user authentication.
+  - Make sure you're passing the Client-ID on Postman
   
-### 3. View Images
+### 3. Delete Image
 
-- **GET** `/api/images`
-- Returns a list of images associated with the authenticated user.
-
-### 4. Delete Image
-
-- **DELETE** `/api/images/{imageId}`
+- **DELETE** `/images/{imageId}`
 - Deletes the image associated with the authenticated user.
 
-### 5. View User Profile
-
-- **GET** `/api/users/profile`
-- Returns the basic user information and associated images.
 
 ## Remaining Features
 
